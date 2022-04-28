@@ -1,61 +1,49 @@
-create table users(
-    id 	INTEGER,
-    name 	VARCHAR,
-    created_at 	DATE 
+--Write a query to get the percentage of search queries where all of the ratings for the query results are less than a rating of 3. Please round your answer to two decimal points.
+
+create table search_results
+(
+    query 	varchar,
+    result_id 	INTEGER,
+    position 	INTEGER,
+    rating 	INTEGER
 );
 
-create table comments(
-    user_id 	INTEGER,
-    body 	VARCHAR,
-    created_at 	DATE
-);
-
-insert into users values
-    (1, 'ramesh', '2020-01-01'),
-    (2, 'suresh', '2020-01-02'),
-    (3, 'ganesh', '2020-02-02'),
-    (4, 'vignesh', '2020-01-03'),
-    (5, 'jignest', '2020-01-05'),
-    (6, 'mugesh', '2020-01-05');
-
-insert into comments values
-    (1, 'first tweet here','2020-01-01'),
-    (1, 'secpnd tweet here','2020-01-02'),
-    (1, 'first tweet of the month','2020-02-01'),
-    (2, 'first tweet here','2020-01-04'),
-    (2, 'first here','2020-01-06'),
-    (2, 'tweet here','2020-01-09'),
-    (2, 'im here','2020-01-01'),
-    (4, 'hi there','2020-01-01'),
-    (4, 'hello','2020-01-10'),
-    (4, 'first time here','2020-01-01'),
-    (4, 'ohana hawaii','2020-01-01'),
-    (4, 'ohana','2020-01-01');
+insert into search_results values
+    ("hey", 1, 5, 3),
+    ("hello", 2, 4, 5),
+    ("wish", 3, 5, 1),
+    ("dude", 4, 2, 3),
+    ("wish", 5, 5, 2),
+    ("hello", 6, 2, 5),
+    ("wish", 7, 3, 3),
+    ("dude", 8, 2, 2),
+    ("meine schatz", 1, 5, 4),
+    ("hey", 9, 6, 2),
+    ("yellove", 10, 2, 2),
+    ("hola amigo", 11, 4, 6),
+    ("aloha", 12, 4, 5),
+    ("hello", 13, 8, 4),
+    ("wish", 14, 5, 1),
+    ("yellove", 15, 1, 2),
+    ("heey", 16, 9, 4),
+    ("hey", 17, 5, 4);
 
 
--- subquery solution
-select x.comments_count as comment_count, count(x.comments_count) as frequency from 
-    (select u.id as id, count(c.created_at) as comments_count
-        from users u
-        left join comments c on c.user_id=u.id and c.created_at between 
-        '2020-01-01' and '2020-01-31'
-        group by u.id
-    ) x
-group by x.comments_count
-
-
---cte solution
-with cmt as 
-(  
-    select u.id, sum(case when c.body is null then 0 else 1 end) comment_count 
-    from users u 
-    left join comments c 
-    on c.user_id = u.id
-    and c.created_at between '2020-01-01' and '2020-01-31'
-    group by u.id
+with max_ratings as (
+    select query, max(rating) as max_rating
+    from search_results
+    group by query
 )
 
-select comment_count,count(id) frequency from cmt group by 1
+select 
+    round(sum(case when max_rating <3 then 1 else 0 end) / (count(query)+0.0),2) as percentage_less_than_3 
+from max_ratings
 
---when where is used after left join it removes records with no match
--- using and will keep the record and group by returns 0
+
+/*
+
+-- percent of total queries with rating less than 3
+select round(sum(case when sr.rating <=3 then 1 else 0 end)/(count(query)+0.0),2) as percentage_less_than_3
+from search_results sr
+
+*/
