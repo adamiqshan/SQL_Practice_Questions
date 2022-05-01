@@ -1,3 +1,8 @@
+-- Article Views I
+-- https://leetcode.com/problems/article-views-i/
+
+-- Write an SQL query to find all the authors that viewed at least one of their own articles. Return the result table sorted by id in ascending order.
+
 create table views
 (
     article_id    int,
