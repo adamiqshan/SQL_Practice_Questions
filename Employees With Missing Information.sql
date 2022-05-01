@@ -1,3 +1,6 @@
+-- Leetcode SQL problem 195
+-- https://leetcode.com/problems/employees-with-missing-information/
+
 create table employees  (
 	employee_id INT,
 	name  VARCHAR
