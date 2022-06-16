@@ -36,3 +36,5 @@ select * from
         end as ext_days
 from weather) x
     where x.ext_days is not null
+
+
